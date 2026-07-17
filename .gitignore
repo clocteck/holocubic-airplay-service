@@ -1,0 +1,9 @@
+# Python test/tool caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Editor and host artefacts
+.DS_Store
+Thumbs.db
+.vscode/

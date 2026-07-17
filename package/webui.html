@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AirPlay Service</title>
+  <style>
+    :root{--bg:#f5f7fb;--card:#fff;--text:#102033;--muted:#63748a;--line:#dce4ee;--cyan:#087ea4;--cyan-soft:#e8f7fb;--green:#12805c;--amber:#a46100;--red:#b83947;--shadow:0 14px 36px rgba(20,39,63,.08)}
+    *{box-sizing:border-box} html,body{margin:0;min-height:100%} body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text)}
+    .page{max-width:1060px;margin:auto;padding:18px}.hero,.card{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}.hero{display:flex;align-items:center;gap:15px;padding:18px;border-radius:18px}.mark{display:grid;place-items:center;width:58px;height:58px;flex:0 0 58px;border-radius:17px;color:#effdff;background:linear-gradient(145deg,#042d47,#0b6989);font-size:27px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.19)}.hero h1{margin:0;font-size:28px;line-height:1.1}.hero p{margin:6px 0 0;color:var(--muted);font-size:14px}.connection{margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--muted);font-size:13px}.dot{width:9px;height:9px;border-radius:99px;background:#94a3b8}.dot.ok{background:#17a974;box-shadow:0 0 0 4px #dcfce9}.dot.warn{background:#f59e0b;box-shadow:0 0 0 4px #fef3c7}.dot.bad{background:#e5484d;box-shadow:0 0 0 4px #fee2e2}
+    .grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(330px,.9fr);gap:14px;margin-top:14px}.card{border-radius:16px;padding:17px}.card h2{margin:0 0 13px;font-size:17px}.subhead{display:flex;align-items:baseline;justify-content:space-between;gap:10px}.hint{color:var(--muted);font-size:12px}.now{padding:15px;border-radius:13px;background:linear-gradient(135deg,#edfaff,#f7fbff);border:1px solid #d8edf4}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#1680a0;font-weight:800}.title{margin:5px 0 4px;font-size:21px;font-weight:800;line-height:1.25;overflow-wrap:anywhere}.artist{font-size:14px;color:#40556c;overflow-wrap:anywhere}.album{margin-top:4px;font-size:12px;color:#718298;overflow-wrap:anywhere}.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:13px}.metric{min-height:70px;padding:11px;border:1px solid var(--line);border-radius:12px;background:#fbfcfe}.metric .label{display:block;font-size:11px;color:var(--muted);font-weight:700}.metric .value{display:block;margin-top:5px;font-size:17px;font-weight:800;overflow-wrap:anywhere}.metric .small{font-size:13px}.health{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:13px}.health div{padding:10px;border-radius:11px;background:#f8fafc;border:1px solid var(--line)}.health span{display:block;font-size:11px;color:var(--muted)}.health strong{display:block;margin-top:4px;font-size:14px;overflow-wrap:anywhere}
+    form{display:grid;gap:13px}.field{padding:12px;border:1px solid var(--line);border-radius:12px;background:#fbfcfe}.field legend{padding:0 3px;font-size:13px;font-weight:800}.options{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.choice{position:relative;display:inline-flex;align-items:center}.choice input{position:absolute;opacity:0;pointer-events:none}.choice span{padding:8px 10px;border-radius:9px;border:1px solid #ced9e5;background:#fff;color:#52657c;font-size:13px;cursor:pointer}.choice input:checked+span{border-color:#61b9d2;background:var(--cyan-soft);color:#006783;font-weight:750;box-shadow:0 0 0 2px rgba(8,126,164,.1)}.switch{display:flex;align-items:center;justify-content:space-between;gap:12px}.switch label{font-size:14px;font-weight:750}.switch input{width:42px;height:23px;accent-color:var(--cyan)}.field p{margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.45}.actions{display:flex;align-items:center;gap:10px}.save{border:0;border-radius:10px;padding:10px 15px;background:#087ea4;color:#fff;font:inherit;font-weight:800;cursor:pointer}.save:disabled{opacity:.55;cursor:wait}.result{font-size:12px;color:var(--muted)}.result.error{color:var(--red)}.notice{margin-top:13px;padding:10px 11px;border-left:3px solid #6daabd;border-radius:8px;background:#f0f8fb;color:#496274;font-size:12px;line-height:1.5}.footer{margin:14px 2px 0;text-align:center;color:#8a99a9;font-size:11px}
+    @media(max-width:760px){.page{padding:12px}.hero{padding:15px}.hero h1{font-size:24px}.grid{grid-template-columns:1fr}.connection{display:none}.health{grid-template-columns:1fr 1fr}.kv{grid-template-columns:1fr 1fr}}@media(max-width:390px){.mark{width:48px;height:48px;flex-basis:48px;border-radius:14px}.hero{gap:11px}.health,.kv{grid-template-columns:1fr}.choice span{padding:7px 8px}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="mark" aria-hidden="true">⌁</div>
+      <div><h1>AirPlay Service</h1><p>HoloCubic 的 AirPlay 1 音频接收器与浮层控制台</p></div>
+      <div class="connection"><i id="connectionDot" class="dot"></i><span id="connectionText">正在读取状态…</span></div>
+    </header>
+    <div class="grid">
+      <section class="card" aria-labelledby="statusTitle">
+        <div class="subhead"><h2 id="statusTitle">实时状态</h2><span class="hint" id="updatedAt">--</span></div>
+        <div class="now"><div class="eyebrow" id="phase">等待连接</div><div class="title" id="title">暂无播放</div><div class="artist" id="artist">AirPlay 服务处于待机状态</div><div class="album" id="album"></div></div>
+        <div class="kv">
+          <div class="metric"><span class="label">设备 IP / RTSP</span><span class="value small" id="network">--</span></div>
+          <div class="metric"><span class="label">客户端</span><span class="value small" id="client">--</span></div>
+          <div class="metric"><span class="label">音频缓冲</span><span class="value" id="buffered">--</span></div>
+          <div class="metric"><span class="label">PCM 欠载</span><span class="value" id="underruns">--</span></div>
+        </div>
+        <div class="health">
+          <div><span>原生 UDP</span><strong id="nativeUdp">--</strong></div>
+          <div><span>RTSP 回复</span><strong id="rtsp">--</strong></div>
+          <div><span>网络丢包</span><strong id="lost">--</strong></div>
+        </div>
+        <div class="notice">本页每 2 秒刷新。音频链路指标用于排查偶发卡顿；如果 iPhone 自动断开，请保留当时显示的 RTSP 与 PCM 欠载数字。</div>
+      </section>
+      <section class="card" aria-labelledby="overlayTitle">
+        <div class="subhead"><h2 id="overlayTitle">歌词 / 字幕浮层</h2><span class="hint">保存后立即生效</span></div>
+        <form id="settingsForm">
+          <div class="field switch"><div><label for="overlayEnabled">显示浮层</label><p>关闭后不再遮挡前台 App，AirPlay 音频仍正常播放。</p></div><input id="overlayEnabled" name="overlay_enabled" type="checkbox" role="switch"></div>
+          <fieldset class="field"><legend>显示位置</legend><div class="options"><label class="choice"><input name="overlay_position" type="radio" value="top"><span>上方</span></label><label class="choice"><input name="overlay_position" type="radio" value="bottom"><span>下方</span></label></div></fieldset>
+          <fieldset class="field"><legend>文字底色</legend><div class="options"><label class="choice"><input name="overlay_background" type="radio" value="transparent"><span>完全透明</span></label><label class="choice"><input name="overlay_background" type="radio" value="gray"><span>固定灰色</span></label></div><p>透明模式最适合透明屏幕与前台动效；灰色模式优先保证文字可读性。</p></fieldset>
+          <fieldset class="field"><legend>字体大小</legend><div class="options"><label class="choice"><input name="overlay_font_size" type="radio" value="14"><span>小</span></label><label class="choice"><input name="overlay_font_size" type="radio" value="16"><span>标准</span></label><label class="choice"><input name="overlay_font_size" type="radio" value="18"><span>大</span></label></div></fieldset>
+          <div class="actions"><button id="saveButton" class="save" type="submit">保存浮层设置</button><span id="saveResult" class="result"></span></div>
+        </form>
+        <div class="notice">歌词更新已自动合并，避免影响播放稳定性；无需手动调节刷新频率。</div>
+      </section>
+    </div>
+    <footer class="footer">AirPlay Service · Copywright: sunfang1cn@gmail.com</footer>
+  </main>
+  <script>
+  (function(){
+    var base="/airplay_service", form=document.getElementById("settingsForm"), save=document.getElementById("saveButton"), result=document.getElementById("saveResult"), configLoaded=false;
+    function text(id,value){document.getElementById(id).textContent=value==null||value===""?"--":String(value)}
+    function checked(name,value){var el=form.querySelector('[name="'+name+'"][value="'+value+'"]');if(el)el.checked=true}
+    function formatNumber(value){return Number(value||0).toLocaleString("zh-CN")}
+    function loadConfig(config){if(!config)return;document.getElementById("overlayEnabled").checked=config.overlay_enabled!==false;checked("overlay_position",config.overlay_position||"top");checked("overlay_background",config.overlay_background||"transparent");checked("overlay_font_size",String(config.overlay_font_size||16))}
+    function renderStatus(data){data=data||{};var audio=data.audio||{},m=data.metrics||{};var playing=!!data.playing,ready=!!data.ready,phase=data.phase||"unknown";text("phase",phase+(playing?" · 正在播放":""));text("title",data.title||"暂无播放");text("artist",data.artist||"AirPlay 服务处于待机状态");text("album",data.album||"");text("network",(data.network_ip||data.system_ip||"未联网")+" / "+(data.rtsp_port||5000));text("client",data.client_ip||"--");text("buffered",formatNumber(audio.pcm_buffered_packets!=null?audio.pcm_buffered_packets:audio.buffered_packets)+" 包");text("underruns",formatNumber(audio.pcm_underruns));text("nativeUdp",data.native_udp?"已启用":"回退 Lua");text("rtsp",formatNumber(m.rtsp_responses_sent)+" / "+formatNumber(m.rtsp_responses_queued));text("lost",formatNumber(audio.lost!=null?audio.lost:m.rtp_lost));text("updatedAt","更新于 "+new Date().toLocaleTimeString("zh-CN",{hour12:false}));var dot=document.getElementById("connectionDot"),label=document.getElementById("connectionText");dot.className="dot "+(playing||ready?"ok":data.error?"bad":"warn");label.textContent=playing?"AirPlay 正在播放":ready?"服务已就绪":data.error?"服务异常":"等待网络"}
+    async function request(url,opt){var response=await fetch(url,opt);var data=await response.json();if(!response.ok||!data.ok)throw new Error(data.error||("HTTP "+response.status));return data}
+    async function refresh(){try{var data=await request(base+"/status");renderStatus(data);if(!configLoaded&&data.overlay_config){loadConfig(data.overlay_config);configLoaded=true}}catch(err){document.getElementById("connectionDot").className="dot bad";text("connectionText","状态读取失败")}}
+    form.addEventListener("submit",async function(event){event.preventDefault();save.disabled=true;result.className="result";result.textContent="正在保存…";var p=new URLSearchParams();p.set("overlay_enabled",document.getElementById("overlayEnabled").checked?"1":"0");["overlay_position","overlay_background","overlay_font_size"].forEach(function(name){var el=form.querySelector('[name="'+name+'"]:checked');if(el)p.set(name,el.value)});try{var data=await request(base+"/config?"+p.toString(),{method:"POST"});loadConfig(data.config);renderStatus(data.status);result.textContent="已保存并应用"}catch(err){result.className="result error";result.textContent=err.message||"保存失败"}finally{save.disabled=false}});
+    refresh();window.setInterval(refresh,2000);
+  })();
+  </script>
+</body>
+</html>

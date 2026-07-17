@@ -1,0 +1,7 @@
+name = AirPlay Service
+entry = main.lua
+kind = service
+allow_webui = true
+autostart_service = true
+description = AirPlay 1/RAOP background receiver service; Author: sunfang1cn@gmail.com
+version = 0.3.24

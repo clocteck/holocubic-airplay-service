@@ -45,6 +45,7 @@ AIRPLAY_SERVICE = {
   WEBUI_CONFIG_PATH = resolved_app_dir .. "/webui_config.lua",
   WEBUI_PAGE_PATH = resolved_app_dir .. "/webui.html",
   WEBUI_ROUTE_BASE = resolve_route_base(),
+  FIXED_WEBUI_ROUTE_BASE = "/" .. FALLBACK_APP_ID,
   running = true,
   timers = {},
   clients = {},
@@ -64,9 +65,18 @@ AIRPLAY_SERVICE = {
   overlay_dirty = false,
   overlay_last_run_ms = nil,
   webui_routes = {},
+  status_routes = {},
 }
 
 local APP = AIRPLAY_SERVICE
+
+local function webui_route_bases()
+  local bases = { APP.WEBUI_ROUTE_BASE }
+  if APP.FIXED_WEBUI_ROUTE_BASE ~= APP.WEBUI_ROUTE_BASE then
+    bases[#bases + 1] = APP.FIXED_WEBUI_ROUTE_BASE
+  end
+  return bases
+end
 
 local defaults = {
   name = "HoloCubic",
@@ -396,26 +406,29 @@ end
 
 local function register_status_route()
   if not httpd or not httpd.dynamic or not httpd.GET then return end
-  local route = APP.WEBUI_ROUTE_BASE .. "/status"
-  pcall(function() httpd.unregister(httpd.GET, route) end)
-  local ok, err = pcall(function()
-    return httpd.dynamic(httpd.GET, route, function()
-      local codec = rawget(_G, "json") or rawget(_G, "sjson")
-      local document = runtime_document()
-      document.ok = true
-      local encoded = codec.encode(document)
-      return {
-        status = "200 OK",
-        type = "application/json; charset=utf-8",
-        headers = { ["cache-control"] = "no-store", ["connection"] = "close" },
-        body = encoded,
-      }
+  APP.status_routes = {}
+  for _, base in ipairs(webui_route_bases()) do
+    local route = base .. "/status"
+    pcall(function() httpd.unregister(httpd.GET, route) end)
+    local ok, err = pcall(function()
+      return httpd.dynamic(httpd.GET, route, function()
+        local codec = rawget(_G, "json") or rawget(_G, "sjson")
+        local document = runtime_document()
+        document.ok = true
+        local encoded = codec.encode(document)
+        return {
+          status = "200 OK",
+          type = "application/json; charset=utf-8",
+          headers = { ["cache-control"] = "no-store", ["connection"] = "close" },
+          body = encoded,
+        }
+      end)
     end)
-  end)
-  if ok and not err then
-    APP.status_route = route
-  else
-    S.warning = "status route unavailable: " .. tostring(err)
+    if ok and not err then
+      APP.status_routes[#APP.status_routes + 1] = route
+    else
+      S.warning = "status route unavailable: " .. tostring(err)
+    end
   end
 end
 
@@ -442,10 +455,6 @@ local function register_webui_routes()
     return
   end
   unregister_webui_routes()
-  local base = APP.WEBUI_ROUTE_BASE
-  local function redirect()
-    return text_response("302 Found", "text/plain; charset=utf-8", "", { ["location"] = base .. "/" })
-  end
   local function index()
     local page
     if file and file.getcontents then
@@ -469,15 +478,21 @@ local function register_webui_routes()
       config = config, status = runtime_document(),
     })
   end
-  local routes = {
-    { httpd.GET, base, redirect },
-    { httpd.GET, base .. "/", index },
-    { httpd.GET, base .. "/config", config_get },
-    { httpd.POST, base .. "/config", config_post },
-  }
-  for _, item in ipairs(routes) do
-    local ok, err = register_webui_route(item[1], item[2], item[3])
-    if not ok then S.warning = "WebUI route unavailable: " .. err end
+  for _, base in ipairs(webui_route_bases()) do
+    local route_base = base
+    local function redirect()
+      return text_response("302 Found", "text/plain; charset=utf-8", "", { ["location"] = route_base .. "/" })
+    end
+    local routes = {
+      { httpd.GET, route_base, redirect },
+      { httpd.GET, route_base .. "/", index },
+      { httpd.GET, route_base .. "/config", config_get },
+      { httpd.POST, route_base .. "/config", config_post },
+    }
+    for _, item in ipairs(routes) do
+      local ok, err = register_webui_route(item[1], item[2], item[3])
+      if not ok then S.warning = "WebUI route unavailable: " .. err end
+    end
   end
 end
 
@@ -1828,10 +1843,12 @@ function APP.stop(reason)
   APP.overlay_dirty = false
   if APP.overlay and APP.overlay.stop then pcall(APP.overlay.stop, APP.overlay) end
   APP.overlay = nil
-  if APP.status_route and httpd and httpd.unregister then
-    pcall(function() httpd.unregister(httpd.GET, APP.status_route) end)
-    APP.status_route = nil
+  if httpd and httpd.unregister then
+    for _, route in ipairs(APP.status_routes or {}) do
+      pcall(function() httpd.unregister(httpd.GET, route) end)
+    end
   end
+  APP.status_routes = {}
   unregister_webui_routes()
   S.ready = false
   set_phase("stopped", reason)

@@ -23,14 +23,14 @@ AirPlay Service 将 HoloCubic透明小电视 (https://item.taobao.com/item.htm?i
 ## 安装
 
 1. 下载或取得本目录下的 [`package`](package) 文件夹。
-2. 将 `package` 内的全部内容复制到 SD 卡的 `/sd/apps/airplay_service/`。
+2. 将 `package` 内的全部内容复制到 SD 卡的 `/sd/apps/holocubic-airplay-service/`。
 3. 将 SD 卡装回设备并重启 HoloCubic。服务会自动启动，并在 Wi-Fi 可用后开始广播。
 4. 在 iPhone、iPad 或 Mac 的 AirPlay 音频输出列表中选择设备。默认名称为 `HoloCubic`。
 
 安装后的目录应如下：
 
 ```text
-/sd/apps/airplay_service/
+/sd/apps/holocubic-airplay-service/
   app.info
   main.lua
   modules/
@@ -39,16 +39,16 @@ AirPlay Service 将 HoloCubic透明小电视 (https://item.taobao.com/item.htm?i
 
 ### 可选配置
 
-若要修改 AirPlay 名称或高级参数，将 `config.example.lua` 复制为 `/sd/apps/airplay_service/config.lua` 后再编辑。大多数用户无需修改配置。
+若要修改 AirPlay 名称或高级参数，将 `config.example.lua` 复制为 `/sd/apps/holocubic-airplay-service/config.lua` 后再编辑。大多数用户无需修改配置。
 
-若要使用逐行歌词，可将 UTF-8 编码的 `.lrc` 文件放入 `/sd/airplay_service/lyrics/`，文件名使用 `<歌手> - <标题>.lrc` 或 `<标题>.lrc`。AirPlay 发送端通常不会传送歌词；仅在歌曲标题稳定时，服务才会按播放进度匹配本地歌词。
+若要使用逐行歌词，可将 UTF-8 编码的 `.lrc` 文件放入 `/sd/apps/holocubic-airplay-service/lyrics/`，文件名使用 `<歌手> - <标题>.lrc` 或 `<标题>.lrc`。AirPlay 发送端通常不会传送歌词；仅在歌曲标题稳定时，服务才会按播放进度匹配本地歌词。
 
 ## 使用与状态查看
 
 播放时，设备屏幕会以轻量文字浮层显示歌曲信息。打开以下地址可进入服务控制台，查看当前播放状态和缓冲情况，并设置浮层的显示开关、位置、背景和字号：
 
 ```text
-http://<设备 IP>/airplay_service/
+http://<设备 IP>/holocubic-airplay-service/
 ```
 
 AirPlay 与设备上的本地音乐播放不能同时使用扬声器；开始 AirPlay 播放前，请先停止本地音乐。

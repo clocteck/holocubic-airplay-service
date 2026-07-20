@@ -2,11 +2,11 @@
 -- Restart the managed service with a short gap so the old TCP/UDP resources
 -- are released before the replacement instance binds its ports.
 
-pcall(function() app.stop_service("airplay_service") end)
+pcall(function() app.stop_service("holocubic-airplay-service") end)
 
 local start_timer = tmr.create()
 start_timer:alarm(2500, tmr.ALARM_SINGLE, function()
-  pcall(function() app.start_service("airplay_service") end)
+  pcall(function() app.start_service("holocubic-airplay-service") end)
 end)
 
 local exit_timer = tmr.create()

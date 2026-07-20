@@ -3,7 +3,7 @@
 -- observable even when the firmware service manager discards them.
 
 local OUTPUT = "/sd/airplay_service_load_diag.json"
-local ENTRY = "/sd/apps/airplay_service/main.lua"
+local ENTRY = "/sd/apps/holocubic-airplay-service/main.lua"
 
 local function copy(value, depth)
   depth = depth or 0

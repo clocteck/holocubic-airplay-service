@@ -8,7 +8,7 @@
 - 实现 `_raop._tcp.local` 广播、RTSP 会话、audio/control/timing UDP、重传请求和时间响应。
 - 实现 Apple-Challenge、固定 AirPlay 1 RSA 私钥运算、OAEP/SHA-1、AES-128-CBC、ALAC 和 L16。
 - 增加 DMAP 标题/歌手/专辑、进度、音量、封面大小/类型和左右声道峰值解析。
-- 增加只读状态接口 `GET /airplay_service/status`，供隔离 Lua VM 中的图形 App 获取播放状态和可视化数据。
+- 增加位于当前 App WebUI 路由下的只读状态接口（默认 `GET /holocubic-airplay-service/status`），供隔离 Lua VM 中的图形 App 获取播放状态和可视化数据。
 - 完成 iPhone 真机发现、连接、加密 ALAC 播放以及长时间指标采样。
 
 ## 最终实时架构

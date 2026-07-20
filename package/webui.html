@@ -53,7 +53,7 @@
   </main>
   <script>
   (function(){
-    var base="/airplay_service", form=document.getElementById("settingsForm"), save=document.getElementById("saveButton"), result=document.getElementById("saveResult"), configLoaded=false;
+    var base=location.pathname.replace(/\/?$/, ""), form=document.getElementById("settingsForm"), save=document.getElementById("saveButton"), result=document.getElementById("saveResult"), configLoaded=false;
     function text(id,value){document.getElementById(id).textContent=value==null||value===""?"--":String(value)}
     function checked(name,value){var el=form.querySelector('[name="'+name+'"][value="'+value+'"]');if(el)el.checked=true}
     function formatNumber(value){return Number(value||0).toLocaleString("zh-CN")}

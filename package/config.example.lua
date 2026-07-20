@@ -27,6 +27,6 @@ return {
   audio_task_core = -1,
   output_task_core = 0,
   -- Optional timed .lrc files: <artist> - <title>.lrc or <title>.lrc.
-  -- lyrics_dir = "/sd/airplay_service/lyrics",
+  -- lyrics_dir = "/sd/apps/holocubic-airplay-service/lyrics",
   debug = false,
 }

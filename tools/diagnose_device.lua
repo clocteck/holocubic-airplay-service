@@ -46,7 +46,7 @@ local result = {
 
 result.before, result.before_error = service_snapshot()
 local call_ok, start_result, start_error = pcall(function()
-  return app.start_service("airplay_service")
+  return app.start_service("holocubic-airplay-service")
 end)
 result.start_call_ok = call_ok
 result.start_result = scalar(start_result)

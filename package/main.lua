@@ -13,14 +13,38 @@ end
 
 local configured = rawget(_G, "AIRPLAY_SERVICE_CONFIG")
 
+local FALLBACK_APP_ID = "holocubic-airplay-service"
+
+local function resolve_app_dir()
+  local current = app and app.current and app.current() or nil
+  local entry = current and current.entry or nil
+  if type(entry) == "string" and entry ~= "" then
+    entry = entry:gsub("\\", "/")
+    local dir = entry:match("^(.*)/[^/]*$")
+    if dir and dir ~= "" then return dir end
+  end
+  return "/sd/apps/" .. FALLBACK_APP_ID
+end
+
+local function resolve_route_base()
+  local route = app and app.route_base and app.route_base() or nil
+  if type(route) ~= "string" or route == "" then route = "/" .. FALLBACK_APP_ID end
+  route = route:gsub("\\", "/")
+  if route:sub(1, 1) ~= "/" then route = "/" .. route end
+  while #route > 1 and route:sub(-1) == "/" do route = route:sub(1, -2) end
+  return route
+end
+
+local resolved_app_dir = resolve_app_dir()
+
 AIRPLAY_SERVICE = {
   VERSION = "0.3.24",
-  APP_DIR = "/sd/apps/airplay_service",
-  MODULE_PATH = "/sd/apps/airplay_service/modules/airplay_core.so",
-  STATUS_PATH = "/sd/apps/airplay_service/status.json",
-  WEBUI_CONFIG_PATH = "/sd/apps/airplay_service/webui_config.lua",
-  WEBUI_PAGE_PATH = "/sd/apps/airplay_service/webui.html",
-  WEBUI_ROUTE_BASE = "/airplay_service",
+  APP_DIR = resolved_app_dir,
+  MODULE_PATH = resolved_app_dir .. "/modules/airplay_core.so",
+  STATUS_PATH = resolved_app_dir .. "/status.json",
+  WEBUI_CONFIG_PATH = resolved_app_dir .. "/webui_config.lua",
+  WEBUI_PAGE_PATH = resolved_app_dir .. "/webui.html",
+  WEBUI_ROUTE_BASE = resolve_route_base(),
   running = true,
   timers = {},
   clients = {},
@@ -98,6 +122,7 @@ if ok_file and type(file_config) == "table" then merge(APP.config, file_config) 
 local ok_webui_file, webui_config = pcall(dofile, APP.WEBUI_CONFIG_PATH)
 if ok_webui_file and type(webui_config) == "table" then merge(APP.config, webui_config) end
 merge(APP.config, configured)
+APP.config.APP_DIR = APP.APP_DIR
 
 APP.state = {
   version = APP.VERSION,
@@ -267,7 +292,7 @@ local function persist_webui_config()
   local config = webui_config_document()
   local rows = {
     "-- Persistent WebUI preferences for AirPlay Service.",
-    "-- This file is maintained by /airplay_service/ and intentionally does not replace config.lua.",
+    "-- This file is maintained by the AirPlay Service WebUI and intentionally does not replace config.lua.",
     "return {",
   }
   for _, key in ipairs(WEBUI_CONFIG_KEYS) do
@@ -371,7 +396,7 @@ end
 
 local function register_status_route()
   if not httpd or not httpd.dynamic or not httpd.GET then return end
-  local route = "/airplay_service/status"
+  local route = APP.WEBUI_ROUTE_BASE .. "/status"
   pcall(function() httpd.unregister(httpd.GET, route) end)
   local ok, err = pcall(function()
     return httpd.dynamic(httpd.GET, route, function()

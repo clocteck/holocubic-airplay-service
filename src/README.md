@@ -1,6 +1,6 @@
 # Native core
 
-本目录构建 `/sd/apps/airplay_service/modules/airplay_core.so`。模块使用 SDK `0x00030000` 的 `module_host_api_v2` 基础接口，只通过稳定宿主过程 ID 获取 Lua、PSRAM、任务和 I2S。完整 ABI 头文件已随项目固化在 [`main/module_abi.h`](main/module_abi.h)，因此本项目不依赖任何相邻 app 或固件源码目录。它是针对 HoloCubic 固件 1.200 的同步副本；构建更新固件时，应先以固件工程的 `src/dynmod/module_abi.h` 更新此文件并重新回归。正式构建对模块自身使用已在真机验证的 `-Os`；`-O2` 在 iPhone 加密 ALAC 协商阶段触发 launcher 重启，须完成根因分析后才能再次启用。
+本目录构建 `/sd/apps/holocubic-airplay-service/modules/airplay_core.so`。模块使用 SDK `0x00030000` 的 `module_host_api_v2` 基础接口，只通过稳定宿主过程 ID 获取 Lua、PSRAM、任务和 I2S。完整 ABI 头文件已随项目固化在 [`main/module_abi.h`](main/module_abi.h)，因此本项目不依赖任何相邻 app 或固件源码目录。它是针对 HoloCubic 固件 1.200 的同步副本；构建更新固件时，应先以固件工程的 `src/dynmod/module_abi.h` 更新此文件并重新回归。正式构建对模块自身使用已在真机验证的 `-Os`；`-O2` 在 iPhone 加密 ALAC 协商阶段触发 launcher 重启，须完成根因分析后才能再次启用。
 
 Lua 导出接口：
 

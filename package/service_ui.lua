@@ -1,5 +1,5 @@
 -- Lightweight Now Playing overlay for the AirPlay background service.
--- Lyrics are optional local .lrc files in /sd/airplay_service/lyrics/.
+-- Lyrics are optional local .lrc files in the current app's lyrics/ directory.
 -- Author: sunfang1cn@gmail.com
 
 local M = {}
@@ -88,9 +88,9 @@ function M.new(cfg)
     background = cfg.overlay_background == "gray" and "gray" or "transparent",
     font_size = math.max(14, math.min(18, tonumber(cfg.overlay_font_size) or 16)),
   }
-  local directory = cfg.lyrics_dir or ((cfg.APP_DIR or "/sd/apps/airplay_service") .. "/lyrics")
+  local directory = cfg.lyrics_dir or ((cfg.APP_DIR or "/sd/apps/holocubic-airplay-service") .. "/lyrics")
   local font_path = cfg.overlay_font_path or
-    ((cfg.APP_DIR or "/sd/apps/airplay_service") .. "/font/airplay_cjk_16.bin")
+    ((cfg.APP_DIR or "/sd/apps/holocubic-airplay-service") .. "/font/airplay_cjk_16.bin")
 
   local function ensure_font()
     if self.native_font or self.font_attempted then return self.native_font ~= nil end

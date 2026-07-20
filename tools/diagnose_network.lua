@@ -3,7 +3,7 @@
 -- probe its RTSP listener. The managed service is restored before exit.
 
 local OUTPUT = "/sd/airplay_service_network_diag.json"
-local ENTRY = "/sd/apps/airplay_service/main.lua"
+local ENTRY = "/sd/apps/holocubic-airplay-service/main.lua"
 local result = {}
 local loaded_service = nil
 
@@ -40,7 +40,7 @@ local function finish()
     pcall(function() loaded_service.stop("diagnostic complete") end)
   end
   write_result()
-  pcall(function() app.start_service("airplay_service") end)
+  pcall(function() app.start_service("holocubic-airplay-service") end)
   if app and app.exit then pcall(app.exit) end
 end
 
@@ -50,7 +50,7 @@ local function load_service()
   if not result.compile_ok then
     result.compile_error = tostring(loadfile_error or chunk_or_error)
     write_result()
-    pcall(function() app.start_service("airplay_service") end)
+    pcall(function() app.start_service("holocubic-airplay-service") end)
     if app and app.exit then pcall(app.exit) end
     return
   end
@@ -63,7 +63,7 @@ local function load_service()
   end
   if not load_ok then
     write_result()
-    pcall(function() app.start_service("airplay_service") end)
+    pcall(function() app.start_service("holocubic-airplay-service") end)
     if app and app.exit then pcall(app.exit) end
     return
   end
@@ -72,7 +72,7 @@ local function load_service()
 end
 
 local stop_ok, stop_result, stop_error = pcall(function()
-  return app.stop_service("airplay_service")
+  return app.stop_service("holocubic-airplay-service")
 end)
 result.stop_call_ok = stop_ok
 result.stop_result = copy(stop_result)

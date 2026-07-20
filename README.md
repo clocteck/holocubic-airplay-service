@@ -32,6 +32,7 @@ AirPlay Service 将 HoloCubic透明小电视 (https://item.taobao.com/item.htm?i
 ```text
 /sd/apps/holocubic-airplay-service/
   app.info
+  info.html
   main.lua
   modules/
     airplay_core.so
